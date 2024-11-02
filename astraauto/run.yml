@@ -1,0 +1,72 @@
+---
+- name: Configure SSH settings
+  hosts: all
+  become: true
+
+  tasks:
+    # Настройка параметров sshd_config
+    - name: Set Protocol to 2
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?Protocol'
+        line: 'Protocol 2'
+    
+    - name: Set ListenAddress
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?ListenAddress'
+        line: 'ListenAddress {{ listen_address }}'
+      vars:
+        listen_address: 0.0.0.0  # Заменить на нужный IP-адрес
+
+    - name: Set LoginGraceTime to 3 minutes
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?LoginGraceTime'
+        line: 'LoginGraceTime 3m'
+
+    - name: Disable PermitRootLogin
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+
+    - name: Enable IgnoreRhosts
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?IgnoreRhosts'
+        line: 'IgnoreRhosts yes'
+
+    - name: Set MaxAuthTries to 6
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?MaxAuthTries'
+        line: 'MaxAuthTries 6'
+
+    - name: Disable PermitEmptyPasswords
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitEmptyPasswords'
+        line: 'PermitEmptyPasswords no'
+
+    - name: Enable UsePAM
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?UsePAM'
+        line: 'UsePAM yes'
+
+    - name: Enable TCPKeepAlive
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?TCPKeepAlive'
+        line: 'TCPKeepAlive yes'
+
+    - name: Disable X11Forwarding
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?X11Forwarding'
+        line: 'X11Forwarding no'
+
+ tasks:
+    - name: Проверить параметры SSH
+      shell: cat /etc/ssh/sshd_config
